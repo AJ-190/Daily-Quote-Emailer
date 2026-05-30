@@ -84,8 +84,9 @@ class Email:
 
 
 if __name__ == "__main__":
-    with open(os.path.join(os.path.dirname(__file__), "emails.txt"), "r") as f:
-        recipients = [line.strip() for line in f if line.strip()]
+    emails = os.getenv("EMAIL_USERS", "")
+    
+    recipients = [line.strip() for line in emails.split(",") if line.strip()]
 
     for recipient in recipients:
         now = dt.datetime.now()
