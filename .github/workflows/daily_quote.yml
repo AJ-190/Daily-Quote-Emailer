@@ -28,4 +28,4 @@ jobs:
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_USERS: ${{secrets.EMAIL_USERS}}
         run: |
-          python datetime_with_email.py
+          python main.py
