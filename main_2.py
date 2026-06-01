@@ -22,10 +22,10 @@ from email.mime.text import MIMEText
 class EmailSender:
 
     def __init__(self, to_email):
-        self.my_email = "adysamuel68@gmail.com"
-        self.password =   "eepg fjyg lcmg ejvt"
+        self.my_email = os.getenv("EMAIL_USER")
+        self.password = os.getenv("EMAIL_PASS")
         self.from_name = "Infranex.AI"
-        self.to_email = self.clean_email(to_email)
+        self.to_email = to_email
 
 
 
@@ -74,9 +74,10 @@ class EmailSender:
                 time.sleep(5)
 # MAIN
 if __name__ == "__main__":
-    with open(os.path.join(os.path.dirname(__file__), "emails.txt"), "r") as file:
-        mails = [mail.strip() for mail in file]
-    for email in mails:
+    from dotenv import load_dotenv
+    load_dotenv()
+    emails = os.getenv("EMAIL_USERS", "")
+    recipients = [line.strip() for line in emails.split(",") if line.strip()]
+    for email in recipients:
         sender = EmailSender(email)
-        print(repr(sender.to_email))  # debug clean email
         sender.send_email()

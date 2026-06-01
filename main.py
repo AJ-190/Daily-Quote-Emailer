@@ -1,4 +1,3 @@
-import datetime as dt
 import smtplib
 import time
 import os
@@ -89,7 +88,5 @@ if __name__ == "__main__":
     recipients = [line.strip() for line in emails.split(",") if line.strip()]
 
     for recipient in recipients:
-        now = dt.datetime.now()
-        weekday = now.weekday()
         email = Email(recipient)
         email.send_email()
