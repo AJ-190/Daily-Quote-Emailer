@@ -1,6 +1,7 @@
 import smtplib
 import time
 import os
+import html
 from email.mime.text import MIMEText
 import random
 from dotenv import load_dotenv
@@ -32,7 +33,12 @@ class Email:
                 current_author = None
                 continue
 
-            if line.startswith('"') and line.endswith('"'):
+            if line.startswith('"') and " — " in line:
+                parts = line.split(" — ", 1)
+                current_quote = parts[0].strip('"').strip()
+                current_author = parts[1].strip()
+
+            elif line.startswith('"') and line.endswith('"'):
                 current_quote = line.strip('"').strip()
 
             elif line.startswith("—"):
@@ -52,7 +58,7 @@ class Email:
         <body style="font-family: Arial; background:#f4f7fb; padding:20px;">
             <div style="max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:10px;">
                 <h2 style="color:#2b5cbf;">Daily Motivation</h2>
-                <p style="font-size:18px;">{quote_author['quote']} ~{quote_author['author']}</p>
+                <p style="font-size:18px;">{html.escape(quote_author['quote'])} ~{html.escape(quote_author['author'])}</p>
                 <p style="color:gray;">— {self.from_name} | Keep shining and keep growing</p>
             </div>
         </body>
