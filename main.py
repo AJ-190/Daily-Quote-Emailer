@@ -114,7 +114,6 @@ class Email:
                         to_addrs=[self.to_email],
                         msg=msg.as_string(),
                     )
-                # Removed non-ASCII emoji to avoid potential encoding issues in some environments
                 logger.info("Email sent to %s successfully", self.to_email)
                 return True
 
@@ -151,27 +150,40 @@ def parse_recipients(env_value: str):
     return parts
 
 
+def first_env(*names):
+    """Return the first non-empty environment variable value from names and the name used."""
+    for name in names:
+        val = os.getenv(name)
+        if val:
+            return val, name
+    return None, None
+
+
 def main():
-    my_email = os.getenv("EMAIL_USER")
-    password = os.getenv("EMAIL_PASS")
-    emails_env = os.getenv("EMAILS")
+    # Accept multiple common env names for robustness in different setups
+    my_email, my_email_key = first_env("EMAIL_USER", "EMAIL_USERNAME", "SENDER_EMAIL", "EMAIL")
+    password, password_key = first_env("EMAIL_PASS", "EMAIL_PASSWORD", "SMTP_PASS", "SMTP_PASSWORD")
+    emails_env, emails_key = first_env("EMAILS", "RECIPIENTS", "TO_EMAILS", "TO_ADDRESSES")
 
     missing = []
     if not my_email:
-        missing.append("EMAIL_USER")
+        missing.append("one of: EMAIL_USER, EMAIL_USERNAME, SENDER_EMAIL, EMAIL")
     if not password:
-        missing.append("EMAIL_PASS")
+        missing.append("one of: EMAIL_PASS, EMAIL_PASSWORD, SMTP_PASS, SMTP_PASSWORD")
     if not emails_env:
-        missing.append("EMAILS")
+        missing.append("one of: EMAILS, RECIPIENTS, TO_EMAILS, TO_ADDRESSES")
 
     if missing:
         logger.error("Missing required environment variables: %s", ", ".join(missing))
-        logger.error("Set the missing variables as GitHub repository Secrets (Settings → Secrets → Actions)")
+        logger.error("Set the missing variables as GitHub repository Secrets (Settings → Secrets → Actions) or in your environment")
         sys.exit(1)
+
+    # Log which env vars are being used (helps debugging mismatched names)
+    logger.info("Using email variable %s, password variable %s, recipients variable %s", my_email_key, password_key, emails_key)
 
     recipients = parse_recipients(emails_env)
     if not recipients:
-        logger.error("No recipients found in EMAILS. Please set EMAILS (comma/semicolon/newline separated)")
+        logger.error("No recipients found in %s. Please set the variable with comma/semicolon/newline separated addresses", emails_key or "EMAILS")
         sys.exit(1)
 
     logger.info("Found %d recipient(s). Beginning send...", len(recipients))
