@@ -170,7 +170,7 @@ def main():
 
     recipients = parse_recipients(emails_env)
     if not recipients:
-        logger.error("No recipients found in EMAIL_USERS. Please set EMAIL_USERS (comma/semicolon/newline separated)")
+        logger.error("No recipients found in EMAILS. Please set EMAILS (comma/semicolon/newline separated)")
         sys.exit(1)
 
     logger.info("Found %d recipient(s). Beginning send...", len(recipients))
