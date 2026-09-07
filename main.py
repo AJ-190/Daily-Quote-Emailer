@@ -153,7 +153,7 @@ def parse_recipients(env_value: str):
 def main():
     my_email = os.getenv("EMAIL_USER")
     password = os.getenv("EMAIL_PASS")
-    emails_env = os.getenv("EMAIL_USERS")
+    emails_env = os.getenv("EMAILS")
 
     missing = []
     if not my_email:
