@@ -161,7 +161,7 @@ def main():
     if not password:
         missing.append("EMAIL_PASS")
     if not emails_env:
-        missing.append("EMAIL_USERS")
+        missing.append("EMAILS")
 
     if missing:
         logger.error("Missing required environment variables: %s", ", ".join(missing))
