@@ -114,7 +114,8 @@ class Email:
                         to_addrs=[self.to_email],
                         msg=msg.as_string(),
                     )
-                logger.info("Email sent to %s successfully ✅", self.to_email)
+                # Removed non-ASCII emoji to avoid potential encoding issues in some environments
+                logger.info("Email sent to %s successfully", self.to_email)
                 return True
 
             except SMTPAuthenticationError as e:
